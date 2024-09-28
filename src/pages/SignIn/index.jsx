@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
@@ -11,6 +11,11 @@ import { useNavigate } from 'react-router-dom';
 import Stack from '@mui/material/Stack';
 import { useForm } from 'react-hook-form';
 import TextCustom from '../../components/TextCustom/index.jsx';
+import { InputAdornment } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
+import { setToken, toggleTheme } from '../../store/index.js';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -31,7 +36,7 @@ const Card = styled(MuiCard)(({ theme }) => ({
   }),
 }));
 
-const SignUpContainer = styled(Stack)(({ theme }) => ({
+const SignInContainer = styled(Stack)(({ theme }) => ({
   height: '100%',
   padding: 4,
   backgroundImage:
@@ -45,6 +50,7 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
   const {
     handleSubmit,
     control,
@@ -55,17 +61,28 @@ export default function SignIn() {
       password: '',
     },
   });
+  const dispatch = useDispatch();
 
   const navigateToSignUp = () => {
     navigate('/sign-up');
   };
 
   const handleSubmitForm = (data) => {
+    //TODO implementar la llamada a la API
+    dispatch(setToken('token'));
     console.log(data);
   };
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
   return (
-    <SignUpContainer direction="column" justifyContent="space-between">
+    <SignInContainer direction="column" justifyContent="space-between">
       <Stack
         sx={{
           justifyContent: 'center',
@@ -82,7 +99,7 @@ export default function SignIn() {
               fontSize: 'clamp(2rem, 10vw, 2.15rem)',
             }}
           >
-            Sign in
+            Iniciar sesión
           </Typography>
           <Box
             component="form"
@@ -115,20 +132,33 @@ export default function SignIn() {
               control={control}
               name="password"
               label="Contraseña"
+              type={showPassword ? 'text' : 'password'}
               required
-              fullWidth
-              type="password"
-              errors={errors}
               rules={{
                 required: 'Contraseña es requerido',
               }}
+              errors={errors}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              className={'h-60px]'}
             />
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Recuerdame"
             />
             <Button type="submit" fullWidth variant="contained">
-              Sign in
+              Iniciar sesión
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
               No tienes cuenta?{' '}
@@ -138,13 +168,13 @@ export default function SignIn() {
                   sx={{ alignSelf: 'center' }}
                   onClick={navigateToSignUp}
                 >
-                  Sign up
+                  Resgistrate
                 </Link>
               </span>
             </Typography>
           </Box>
         </Card>
       </Stack>
-    </SignUpContainer>
+    </SignInContainer>
   );
 }

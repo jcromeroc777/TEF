@@ -1,17 +1,18 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Checkbox from '@mui/material/Checkbox';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import FormLabel from '@mui/material/FormLabel';
-import FormControl from '@mui/material/FormControl';
 import Link from '@mui/material/Link';
-import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
 import MuiCard from '@mui/material/Card';
 import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import TextCustom from '../../components/TextCustom/index.jsx';
+import { InputAdornment } from '@mui/material';
+import IconButton from '@mui/material/IconButton';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useState } from 'react';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -45,64 +46,40 @@ const SignUpContainer = styled(Stack)(({ theme }) => ({
 }));
 
 export default function SignUp() {
-  const [emailError, setEmailError] = React.useState(false);
-  const [emailErrorMessage, setEmailErrorMessage] = React.useState('');
-  const [passwordError, setPasswordError] = React.useState(false);
-  const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
-  const [nameError, setNameError] = React.useState(false);
-  const [nameErrorMessage, setNameErrorMessage] = React.useState('');
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+  const [showRepeatPassword, setRepeatPassword] = useState(false);
+
+  const {
+    handleSubmit,
+    control,
+    getValues,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
   const navigateToSignIn = () => {
-    navigate('/');
+    navigate('/sign-in');
   };
 
-  const validateInputs = () => {
-    const email = document.getElementById('email');
-    const password = document.getElementById('password');
-    const name = document.getElementById('name');
-
-    let isValid = true;
-
-    if (!email.value || !/\S+@\S+\.\S+/.test(email.value)) {
-      setEmailError(true);
-      setEmailErrorMessage('Please enter a valid email address.');
-      isValid = false;
-    } else {
-      setEmailError(false);
-      setEmailErrorMessage('');
-    }
-
-    if (!password.value || password.value.length < 6) {
-      setPasswordError(true);
-      setPasswordErrorMessage('Password must be at least 6 characters long.');
-      isValid = false;
-    } else {
-      setPasswordError(false);
-      setPasswordErrorMessage('');
-    }
-
-    if (!name.value || name.value.length < 1) {
-      setNameError(true);
-      setNameErrorMessage('Name is required.');
-      isValid = false;
-    } else {
-      setNameError(false);
-      setNameErrorMessage('');
-    }
-
-    return isValid;
+  const handleSubmitForm = (data) => {
+    console.log(data);
   };
 
-  const handleSubmit = (event) => {
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleClickShowRepeatPassword = () => {
+    setRepeatPassword(!showRepeatPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
     event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-    });
   };
 
   return (
@@ -123,83 +100,138 @@ export default function SignUp() {
               fontSize: 'clamp(2rem, 10vw, 2.15rem)',
             }}
           >
-            Sign up
+            Registrarse
           </Typography>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit((data) => handleSubmitForm(data))}
             sx={{
               display: 'flex',
               flexDirection: 'column',
               gap: 2,
             }}
+            noValidate
           >
-            <FormControl>
-              <FormLabel htmlFor="name">Full name</FormLabel>
-              <TextField
-                autoComplete="name"
-                name="name"
-                required
-                fullWidth
-                id="name"
-                placeholder="Jon Snow"
-                error={nameError}
-                helperText={nameErrorMessage}
-                color={nameError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="email">Email</FormLabel>
-              <TextField
-                required
-                fullWidth
-                id="email"
-                placeholder="your@email.com"
-                name="email"
-                autoComplete="email"
-                variant="outlined"
-                error={emailError}
-                helperText={emailErrorMessage}
-                color={passwordError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControl>
-              <FormLabel htmlFor="password">Password</FormLabel>
-              <TextField
-                required
-                fullWidth
-                name="password"
-                placeholder="••••••"
-                type="password"
-                id="password"
-                autoComplete="new-password"
-                variant="outlined"
-                error={passwordError}
-                helperText={passwordErrorMessage}
-                color={passwordError ? 'error' : 'primary'}
-              />
-            </FormControl>
-            <FormControlLabel
-              control={<Checkbox value="allowExtraEmails" color="primary" />}
-              label="I want to receive updates via email."
-            />
-            <Button
-              type="submit"
+            <TextCustom
+              control={control}
+              name="name"
+              label="Nombre"
+              required
               fullWidth
-              variant="contained"
-              onClick={validateInputs}
-            >
-              Sign up
+              type="text"
+              errors={errors}
+              rules={{
+                required: 'Nombre es requerido',
+              }}
+            />
+            <TextCustom
+              control={control}
+              name="document"
+              label="Documento"
+              required
+              fullWidth
+              type="text"
+              errors={errors}
+              rules={{
+                required: 'Documento es requerido',
+              }}
+            />
+            <TextCustom
+              control={control}
+              name="phone"
+              label="Teléfono"
+              required
+              fullWidth
+              type="text"
+              errors={errors}
+              rules={{
+                required: 'Teléfono es requerido',
+              }}
+            />
+            <TextCustom
+              control={control}
+              name="email"
+              label="Correo"
+              required
+              fullWidth
+              type="email"
+              errors={errors}
+              rules={{
+                required: 'Correo es requerido',
+                pattern: {
+                  value: /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$/,
+                  message: 'Correo inválido',
+                },
+              }}
+            />
+            <TextCustom
+              control={control}
+              name="password"
+              label="Contraseña"
+              type={showPassword ? 'text' : 'password'}
+              required
+              rules={{
+                required: 'Contraseña es requerido',
+              }}
+              errors={errors}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              className={'h-60px]'}
+            />
+            <TextCustom
+              control={control}
+              name="repeatPassword"
+              label="Repetir contraseña"
+              type={showRepeatPassword ? 'text' : 'password'}
+              required
+              rules={{
+                required: 'Repetir contraseña es requerido',
+                validate: {
+                  matchPasswords: (value) => {
+                    if (value !== getValues('password'))
+                      return 'Las contraseñas no coinciden';
+                  },
+                },
+              }}
+              errors={errors}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowRepeatPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showRepeatPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+              className={'h-60px]'}
+            />
+            <Button type="submit" fullWidth variant="contained">
+              Registrarse
             </Button>
             <Typography sx={{ textAlign: 'center' }}>
-              Already have an account?{' '}
+              Ya tienes cuenta?{' '}
               <span>
                 <Link
                   variant="body2"
                   sx={{ alignSelf: 'center' }}
                   onClick={navigateToSignIn}
                 >
-                  Sign in
+                  Iniciar sesión
                 </Link>
               </span>
             </Typography>
