@@ -7,7 +7,7 @@ export default function PrivateRoutes() {
   return (
     <Routes>
       <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/payment" element={<Payment />} />
+      <Route path="/payment" element={<Payment />} />
       <Route path="*" element={<Navigate to="/dashboard" />} />
     </Routes>
   );

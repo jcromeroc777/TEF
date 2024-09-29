@@ -9,9 +9,9 @@ import { SnackbarProvider } from 'notistack';
 createRoot(document.getElementById('root')).render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-        <SnackbarProvider maxSnack={3}>
-            <App />
-        </SnackbarProvider>
+      <SnackbarProvider maxSnack={3}>
+        <App />
+      </SnackbarProvider>
     </PersistGate>
   </Provider>,
 );

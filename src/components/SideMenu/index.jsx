@@ -7,7 +7,7 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import MenuContent from './../MenuContent/index.jsx';
 import OptionsMenu from './../OptionsMenu/index.jsx';
-import {useSelector} from "react-redux";
+import { useSelector } from 'react-redux';
 
 const drawerWidth = 240;
 
@@ -23,7 +23,7 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu({ setMenuActive, menuActive }) {
-    const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state) => state.auth.user);
   return (
     <Drawer
       variant="permanent"

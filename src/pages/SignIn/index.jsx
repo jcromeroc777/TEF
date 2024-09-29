@@ -15,9 +15,9 @@ import { InputAdornment } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import {setRememberMe, setToken, setUser} from '../../store/index.js';
-import {instance} from "../../api/index.js";
-import {useSnackbar} from "notistack";
+import { setRememberMe, setToken, setUser } from '../../store/index.js';
+import { instance } from '../../api/index.js';
+import { useSnackbar } from 'notistack';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -75,13 +75,13 @@ export default function SignIn() {
   const handleSubmitForm = async (data) => {
     try {
       const response = await instance.post('/signin', data);
-      console.log(response.data)
+      console.log(response.data);
       const token = response.data.access_token;
       const user = response.data.user;
       dispatch(setToken(token));
       dispatch(setUser(user));
     } catch (error) {
-      enqueueSnackbar(error.response.data.error, {variant: 'error'});
+      enqueueSnackbar(error.response.data.error, { variant: 'error' });
     }
   };
 
@@ -166,7 +166,16 @@ export default function SignIn() {
               className={'h-60px]'}
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" checked={remember} onClick={() => {dispatch(setRememberMe(!remember));}}/>}
+              control={
+                <Checkbox
+                  value="remember"
+                  color="primary"
+                  checked={remember}
+                  onClick={() => {
+                    dispatch(setRememberMe(!remember));
+                  }}
+                />
+              }
               label="Recuerdame"
             />
             <Button type="submit" fullWidth variant="contained">
