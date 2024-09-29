@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -7,6 +7,9 @@ import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import { useForm } from 'react-hook-form';
 import TextCustom from '../../components/TextCustom/index.jsx';
+import {instanceWithToken} from "../../api/index.js";
+import {useSnackbar} from "notistack";
+import {useSelector} from "react-redux";
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -48,11 +51,26 @@ export default function Reload() {
         defaultValues: {
         },
     });
+    const token = useSelector((state) => state.auth.token);
+    const api = instanceWithToken(token);
+    const { enqueueSnackbar } = useSnackbar();
 
 
-    const handleSubmitForm = (data) => {
-        //TODO implementar la llamada a la API
-        console.log(data);
+    const handleSubmitForm = async (data) => {
+        try {
+            data.amount = Math.floor(data.amount);
+            const response = await api.post('/wallet/charge', data);
+            if (response.data.status === 404) {
+                throw new Error('No se encontró el usuario');
+            }
+            enqueueSnackbar("Saldo recargado", {variant: 'success'});
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+
+        } catch (error) {
+            enqueueSnackbar('Los datos no son correctos', {variant: 'error'});
+        }
     };
 
     return (
