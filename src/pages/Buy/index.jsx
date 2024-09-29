@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
@@ -7,6 +7,9 @@ import { styled } from '@mui/material/styles';
 import Stack from '@mui/material/Stack';
 import { useForm } from 'react-hook-form';
 import TextCustom from '../../components/TextCustom/index.jsx';
+import {useSelector} from "react-redux";
+import {instanceWithToken} from "../../api/index.js";
+import {useSnackbar} from "notistack";
 
 const Card = styled(MuiCard)(({ theme }) => ({
     display: 'flex',
@@ -48,11 +51,29 @@ export default function Reload() {
         defaultValues: {
         },
     });
+    const token = useSelector((state) => state.auth.token);
+    const api = instanceWithToken(token);
+    const { enqueueSnackbar } = useSnackbar();
 
 
-    const handleSubmitForm = (data) => {
-        //TODO implementar la llamada a la API
-        console.log(data);
+    const handleSubmitForm = async (data) => {
+        try {
+            data.amount = Math.floor(data.amount);
+            const response = await api.post('/wallet/payment', data);
+            if (response.data.status === 404) {
+                throw new Error('No se encontró el usuario');
+            }
+            if (response.data.status === 412) {
+                throw new Error('Saldo insuficiente');
+            }
+            enqueueSnackbar("Link de compra enviado a su correo", {variant: 'success'});
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+
+        } catch (error) {
+            enqueueSnackbar('Los datos no son correctos o su cartera no tiene los fondos suficientes', {variant: 'error'});
+        }
     };
 
     return (
