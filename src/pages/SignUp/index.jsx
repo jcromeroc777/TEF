@@ -13,6 +13,9 @@ import { InputAdornment } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useState } from 'react';
+import {instance} from "../../api/index.js";
+import { useSnackbar } from 'notistack';
+
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -49,6 +52,7 @@ export default function SignUp() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setRepeatPassword] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const {
     handleSubmit,
@@ -66,8 +70,16 @@ export default function SignUp() {
     navigate('/sign-in');
   };
 
-  const handleSubmitForm = (data) => {
-    console.log(data);
+  const handleSubmitForm = async (data) => {
+    try {
+      await instance.post('/signup', data);
+      enqueueSnackbar('Usuario creado!', {variant: 'success'});
+      setTimeout(() => {
+        navigateToSignIn();
+      }, 2000);
+    } catch (error) {
+      enqueueSnackbar(error.response.data.error, {variant: 'error'});
+    }
   };
 
   const handleClickShowPassword = () => {

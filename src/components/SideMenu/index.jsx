@@ -3,13 +3,11 @@ import { styled } from '@mui/material/styles';
 import Avatar from '@mui/material/Avatar';
 import MuiDrawer, { drawerClasses } from '@mui/material/Drawer';
 import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import SelectContent from './../SelectContent/index.jsx';
 import MenuContent from './../MenuContent/index.jsx';
-import CardAlert from './../CardAlert/index.jsx';
 import OptionsMenu from './../OptionsMenu/index.jsx';
+import {useSelector} from "react-redux";
 
 const drawerWidth = 240;
 
@@ -25,6 +23,7 @@ const Drawer = styled(MuiDrawer)({
 });
 
 export default function SideMenu({ setMenuActive, menuActive }) {
+    const user = useSelector((state) => state.auth.user);
   return (
     <Drawer
       variant="permanent"
@@ -64,10 +63,10 @@ export default function SideMenu({ setMenuActive, menuActive }) {
             variant="body2"
             sx={{ fontWeight: 500, lineHeight: '16px' }}
           >
-            Julio Romero
+            {user.name}
           </Typography>
           <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-            julio@yopmail.com
+            {user.email}
           </Typography>
         </Box>
         <OptionsMenu />

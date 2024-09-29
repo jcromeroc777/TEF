@@ -34,10 +34,10 @@ function StatCard({ title, value, trend }) {
                                 <Chip
                                     size="medium"
                                     color={color}
-                                    label={value}
+                                    label={`${value} $`}
                                     sx={{
                                         height: '40px',
-                                        width: '100px',
+                                        width: '200px',
                                         fontSize: '1.5rem',
                                         marginLeft: '10px',
                                     }}

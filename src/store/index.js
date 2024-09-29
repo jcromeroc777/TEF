@@ -9,7 +9,7 @@ const initialStateTheme = {
 const initialStateAuth = {
   rememberMe: false,
   token: '',
-  user: '',
+  user: {},
 };
 
 const themeSlice = createSlice({

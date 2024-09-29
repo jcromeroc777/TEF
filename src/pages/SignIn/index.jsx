@@ -15,7 +15,9 @@ import { InputAdornment } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
-import { setToken, toggleTheme } from '../../store/index.js';
+import {setRememberMe, setToken, setUser} from '../../store/index.js';
+import {instance} from "../../api/index.js";
+import {useSnackbar} from "notistack";
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -51,26 +53,36 @@ const SignInContainer = styled(Stack)(({ theme }) => ({
 export default function SignIn() {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
+  const user = useSelector((state) => state.auth.user);
+  const remember = useSelector((state) => state.auth.rememberMe);
   const {
     handleSubmit,
     control,
     formState: { errors },
   } = useForm({
     defaultValues: {
-      email: '',
+      email: remember ? user.email : '',
       password: '',
     },
   });
-  const dispatch = useDispatch();
 
   const navigateToSignUp = () => {
     navigate('/sign-up');
   };
 
-  const handleSubmitForm = (data) => {
-    //TODO implementar la llamada a la API
-    dispatch(setToken('token'));
-    console.log(data);
+  const handleSubmitForm = async (data) => {
+    try {
+      const response = await instance.post('/signin', data);
+      console.log(response.data)
+      const token = response.data.access_token;
+      const user = response.data.user;
+      dispatch(setToken(token));
+      dispatch(setUser(user));
+    } catch (error) {
+      enqueueSnackbar(error.response.data.error, {variant: 'error'});
+    }
   };
 
   const handleClickShowPassword = () => {
@@ -154,7 +166,7 @@ export default function SignIn() {
               className={'h-60px]'}
             />
             <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
+              control={<Checkbox value="remember" color="primary" checked={remember} onClick={() => {dispatch(setRememberMe(!remember));}}/>}
               label="Recuerdame"
             />
             <Button type="submit" fullWidth variant="contained">
